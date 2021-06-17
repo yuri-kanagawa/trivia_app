@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-
 
 class Favorite {
-  //int id;
   int id;
   String title;
   String content1;
@@ -14,7 +11,7 @@ class Favorite {
   int cr_date;
   DocumentReference documentReference;
 
-  Favorite(DocumentSnapshot doc){
+  Favorite(DocumentSnapshot doc) {
     this.documentReference = doc.reference;
     this.id = doc.data()['id'];
     this.title = doc.data()['title'];
@@ -26,7 +23,8 @@ class Favorite {
     this.genre = doc.data()['genre'];
   }
 
-  Favorite.newFavorite({id,title, youtube,content1, content2, content3, cr_date,genre}) {
+  Favorite.newFavorite(
+      {id, title, youtube, content1, content2, content3, cr_date, genre}) {
     this.id = id;
     this.title = title;
     this.content1 = content1;
@@ -37,28 +35,25 @@ class Favorite {
     this.genre = genre;
   }
 
-  //
   factory Favorite.fromMap(Map<String, dynamic> json) => Favorite.newFavorite(
-
-    id: json["id"],
-    title: json["title"],
-    content1:json["content1"],
-    content2:json["content2"],
-    content3:json["content3"],
-    youtube:json["youtube"],
-    cr_date: json["cr_date"],
-    genre: json["genre"],
-  );
+        id: json["id"],
+        title: json["title"],
+        content1: json["content1"],
+        content2: json["content2"],
+        content3: json["content3"],
+        youtube: json["youtube"],
+        cr_date: json["cr_date"],
+        genre: json["genre"],
+      );
 
   Map<String, dynamic> toMap() => {
-    "id": this.id,
-    "title": this.title,
-    "content1": this.content1,
-    "content2": this.content2,
-    "content3": this.content3,
-    "youtube": this.youtube,
-    "cr_date": this.cr_date,
-    "genre": this.genre
-
-  };
+        "id": this.id,
+        "title": this.title,
+        "content1": this.content1,
+        "content2": this.content2,
+        "content3": this.content3,
+        "youtube": this.youtube,
+        "cr_date": this.cr_date,
+        "genre": this.genre
+      };
 }

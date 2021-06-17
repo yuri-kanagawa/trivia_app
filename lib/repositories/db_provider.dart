@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
@@ -11,7 +12,6 @@ import '../models/favorite.dart';
 import '../models/trivia.dart';
 
 class DBProvider extends ChangeNotifier {
-
   bool flg;
   DBProvider._();
 
@@ -21,10 +21,8 @@ class DBProvider extends ChangeNotifier {
 
   static final _tableName = "TRIVIA_FAVORITE";
 
-  // ignore: non_constant_identifier_names
   List<Trivia> TriviaList = [];
 
-  // ignore: non_constant_identifier_names
   List<Favorite> FavoriteList = [];
 
   DBProvider();
@@ -32,7 +30,8 @@ class DBProvider extends ChangeNotifier {
   Future<Database> get database async {
     if (_database != null) {
       return _database;
-    }else{ // DBがなかったら作る
+    } else {
+      // DBがなかったら作る
       _database = await initDB();
       return _database;
     }
@@ -45,28 +44,26 @@ class DBProvider extends ChangeNotifier {
     String path = join(documentsDirectory.path, "TRIVIA_FAVORITE.db");
 
     return await openDatabase(path, version: 1, onCreate: _createTable);
-
   }
 
   _createTable(Database db, int version) async {
-
-    return await db.execute(
-
-        "CREATE TABLE $_tableName ("
-            "id int PRIMARY KEY,"
-            "title TEXT NOT NULL,"
-            "youtube TEXT,"
-            "content1 TEXT NOT NULL,"
-            "content2 TEXT,"
-            "content3 TEXT,"
-            "genre TEXT,"
-            "cr_date int"
-            ")"
-    );
+    return await db.execute("CREATE TABLE $_tableName ("
+        "id int PRIMARY KEY,"
+        "title TEXT NOT NULL,"
+        "youtube TEXT,"
+        "content1 TEXT NOT NULL,"
+        "content2 TEXT,"
+        "content3 TEXT,"
+        "genre TEXT,"
+        "cr_date int"
+        ")");
   }
 
-  getAllTrivias() async{
-    final snapshots = await FirebaseFirestore.instance.collection('trivia').orderBy("id").get();
+  getAllTrivias() async {
+    final snapshots = await FirebaseFirestore.instance
+        .collection('trivia')
+        .orderBy("id")
+        .get();
     final docs = snapshots.docs;
     TriviaList = docs.map((doc) => Trivia(doc)).toList();
     this.TriviaList = TriviaList;
@@ -74,7 +71,6 @@ class DBProvider extends ChangeNotifier {
   }
 
   search(text) async {
-
     List tmpList = [];
 
     int number;
@@ -87,13 +83,17 @@ class DBProvider extends ChangeNotifier {
     }
 
     if (text.length > 0) {
-      tmpList = this.TriviaList
-          .where(
-              (TriviaList) =>
-              // ignore: unrelated_type_equality_checks
-              TriviaList.content1.contains(text) || TriviaList.title.contains(text) || TriviaList.id==(number))
+      tmpList = this
+          .TriviaList
+          .where((TriviaList) =>
+              TriviaList.content1.contains(text) ||
+              TriviaList.content2.contains(text) ||
+              TriviaList.content3.contains(text) ||
+              TriviaList.title.contains(text) ||
+              TriviaList.id == (number) ||
+              TriviaList.genre.contains(text))
           .toList();
-    }else{
+    } else {
       tmpList = this.TriviaList;
     }
     print(tmpList.length);
@@ -101,53 +101,41 @@ class DBProvider extends ChangeNotifier {
     return tmpList;
   }
 
-  getFavoriteId(id) async{
-
+  getFavoriteId(id) async {
     final db = await database;
-    var res = await db.query(
-        _tableName,
-        where: "id = ?",
-        whereArgs: [id]
-    );
+    var res = await db.query(_tableName, where: "id = ?", whereArgs: [id]);
 
     TriviaList =
-      res.isNotEmpty ? res.map((c) => Trivia.fromMap(c)).toList() : null;
+        res.isNotEmpty ? res.map((c) => Trivia.fromMap(c)).toList() : null;
 
-    if(TriviaList != null){
+    if (TriviaList != null) {
       flg = true;
-
-    }else{
+    } else {
       flg = false;
     }
     notifyListeners();
   }
 
-  getFavoriteId2(int id) async{
-
+  getFavoriteId2(int id) async {
     final db = await database;
-    var res = await db.query(
-        _tableName,
-        where: "id = ?",
-        whereArgs: [id]
-    );
+    var res = await db.query(_tableName, where: "id = ?", whereArgs: [id]);
 
     FavoriteList =
-    res.isNotEmpty ? res.map((c) => Favorite.fromMap(c)).toList() : null;
+        res.isNotEmpty ? res.map((c) => Favorite.fromMap(c)).toList() : null;
 
-    if(FavoriteList != null){
+    if (FavoriteList != null) {
       flg = true;
-
-    }else{
+    } else {
       flg = false;
     }
     notifyListeners();
   }
 
-  getAllFavoriteTrivias() async{
+  getAllFavoriteTrivias() async {
     final db = await database;
-    var res = await db.query(_tableName,orderBy:'id');
+    var res = await db.query(_tableName, orderBy: 'id');
     FavoriteList =
-      res.isNotEmpty ? res.map((c) => Favorite.fromMap(c)).toList() : [];
+        res.isNotEmpty ? res.map((c) => Favorite.fromMap(c)).toList() : [];
     this.FavoriteList = FavoriteList;
     return FavoriteList;
   }
@@ -166,23 +154,14 @@ class DBProvider extends ChangeNotifier {
 
   deleteFavorite(int id) async {
     final db = await database;
-    var res = db.delete(
-        _tableName,
-        where: "id = ?",
-        whereArgs: [id]
-    );
+    var res = db.delete(_tableName, where: "id = ?", whereArgs: [id]);
     return res;
   }
 
-  updateTrivia(trivia) async{
+  updateTrivia(trivia) async {
     final db = await database;
-    var res  = await db.update(
-        _tableName,
-        trivia.toMap(),
-        where: "id = ?",
-        whereArgs: [trivia.id]
-    );
+    var res = await db.update(_tableName, trivia.toMap(),
+        where: "id = ?", whereArgs: [trivia.id]);
     return res;
   }
-
 }

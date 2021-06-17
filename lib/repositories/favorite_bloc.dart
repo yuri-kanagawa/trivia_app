@@ -5,8 +5,7 @@ import 'package:rxdart/rxdart.dart';
 import '../models/favorite.dart';
 import '../repositories/db_provider.dart';
 
-class FavoriteBloc{
-
+class FavoriteBloc {
   final _favoriteController = BehaviorSubject<List<Favorite>>();
 
   Stream<List<Favorite>> get favoriteStream => _favoriteController.stream;

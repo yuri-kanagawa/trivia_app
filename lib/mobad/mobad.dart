@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,35 +24,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 //}
 
 class Adcount {
-
-
   //10回のカウントを行う
   //int count;
   static counter() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     int count = prefs.getInt('counter');
     print(count);
-    if (count == null){
-      prefs.setInt('counter',1);
+    if (count == null) {
+      prefs.setInt('counter', 1);
       count = prefs.getInt('counter');
     }
 
-    if(count > 9){
-      prefs.setInt('counter',1);
+    if (count > 9) {
+      prefs.setInt('counter', 1);
       AdmobService.showInterstitialAd();
-    }else{
-      count ++;
-      prefs.setInt('counter',count);
+    } else {
+      count++;
+      prefs.setInt('counter', count);
     }
   }
 }
 
-//const String testDevice = '0b60a0dc8901ca7b635b7294ef48b01a';
-
-///https://stackoverflow.com/questions/50972863/admob-banner-how-to-show-only-on-home
-///
 class AdmobService {
-
   static InterstitialAd _interstitialAd;
 
   static String get iOSInterstitialAdUnitID => Platform.isAndroid
@@ -60,11 +54,9 @@ class AdmobService {
 
   static initialize() {
     if (MobileAds.instance == null) {
-      //print("initialize:AdMob");
       MobileAds.instance.initialize();
     }
   }
-
 
   static InterstitialAd _createInterstitialAd() {
     return InterstitialAd(
@@ -90,4 +82,3 @@ class AdmobService {
     _interstitialAd.load();
   }
 }
-
