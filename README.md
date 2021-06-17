@@ -31,7 +31,7 @@
    そうなった際にFirestoreのデータを読み込むと同時にお気に入りに登録したデータも更新されるようにしました  
    想定される原因  
    YouTubeの動画が削除されたなど  
-   2.StatefulWidgetを極力使わないようにしました
+   2.StatefulWidgetを極力使わないようにしました  
      FlutterのLTに参加した際に実務ではStatefulWidgetはほとんど使わないということを聞いたため
 
 ## Flutter Web版  
